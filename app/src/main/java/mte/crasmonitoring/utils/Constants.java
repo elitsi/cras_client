@@ -6,5 +6,5 @@ package mte.crasmonitoring.utils;
 
 public class Constants {
     public static final String API_BASE_URL = "http://cras.mybluemix.net";
-    public static final String KEY_USER_ID = "USER_ID";
+
 }

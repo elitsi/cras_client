@@ -5,6 +5,8 @@ package mte.crasmonitoring.Auth;
  */
 
 
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -16,16 +18,9 @@ import retrofit2.http.POST;
 public interface CrasAccountService {
 
     @POST("/add_user")
-    @FormUrlEncoded
-    Call<String> insertUser(@Field("user_id") String uid,
-                            @Field("mail") String email,
-                            @Field("name") String displayName,
-                            @Field("picture") String pictureUri);
-
-    @POST("/add_user")
-    Call<String> insertUser2(@Body UserInfo userInfo);
+    Call<ResponseBody> insertUser(@Body UserInfo userInfo);
 
     @GET("/add_user_supervisor")
-    Call<String> addSupervisor(@Header("sup_id") String supervisorId);
+    Call<ResponseBody> addSupervisor(@Header("sup_id") String supervisorId);
 
 }

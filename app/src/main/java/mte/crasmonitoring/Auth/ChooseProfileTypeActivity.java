@@ -32,9 +32,12 @@ import mte.crasmonitoring.MainActivity;
 import mte.crasmonitoring.R;
 import mte.crasmonitoring.utils.Constants;
 import mte.crasmonitoring.utils.PermissionsManager;
+import mte.crasmonitoring.utils.SharedPrefsUtils;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
+
 import retrofit2.http.Field;
 import retrofit2.http.GET;
 
@@ -46,30 +49,22 @@ public class ChooseProfileTypeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_profile);
 
-        checkInvitations();
-
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             user = auth.getCurrentUser();
             ((TextView)(findViewById(R.id.mailTxt))).setText(user.getEmail());
             ((TextView)(findViewById(R.id.nameTxt))).setText(user.getDisplayName());
 
+            /*
             CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, this);
             //Call<String> call = accountService.insertUser(user.getUid(),user.getEmail(),user.getDisplayName(),"");
-            Call<String> call = accountService.insertUser2(new UserInfo(user.getDisplayName(), user.getEmail(),user.getUid(),"testImage"));
+            Call<ResponseBody> call = accountService.insertUser2(new UserInfo(user.getDisplayName(), user.getEmail(),user.getUid(),"testImage"));
 
-
-            call.enqueue(new Callback<String >() {
+            call.enqueue(new Callback<ResponseBody>() {
                      @Override
-                     public void onResponse(Call<String> call, Response<String> response) {
+                     public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                          if (response.isSuccessful()) {
-                             // user object available
-                             Log.d("Response Successful: ", response.message());
-
-                             SharedPreferences sharedPref = ChooseProfileTypeActivity.this.getPreferences(Context.MODE_PRIVATE);
-                             SharedPreferences.Editor editor = sharedPref.edit();
-                             editor.putString(Constants.KEY_USER_ID, user.getUid());
-                             editor.commit();
+                             SharedPrefsUtils.saveUserId(ChooseProfileTypeActivity.this,user.getUid());
 
                              checkInvitations();
 
@@ -78,15 +73,34 @@ public class ChooseProfileTypeActivity extends AppCompatActivity {
                          }
                      }
 
-                     @Override
-                     public void onFailure(Call<String> call, Throwable t) {
+                @Override
+                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                          // something went completely south (like no internet connection)
                          Log.d("Error", t.getMessage());
                      }
-            });
+            });th
 
 
             Toast.makeText(getApplicationContext(),call.toString(),Toast.LENGTH_LONG);
+            */
+            Log.v("firebaseToken", "firebaseToken - " + FirebaseInstanceId.getInstance().getToken());
+            UserInfo userInfo = new UserInfo(
+                    user.getDisplayName(),
+                    user.getEmail(),
+                    user.getUid(),
+                    null,
+                    FirebaseInstanceId.getInstance().getToken()
+            );
+            APIManager.insertUser(this, userInfo, new APICallbacks<ResponseBody>() {
+                @Override
+                public void successfulResponse(ResponseBody responseBody) {
+                    SharedPrefsUtils.saveUserId(ChooseProfileTypeActivity.this,user.getUid());
+                    checkInvitations();
+                }
+
+                @Override
+                public void FailedResponse(String errorMessage) {}
+            });
         }
 
         (findViewById(R.id.btn_share_deep_link)).setOnClickListener(new View.OnClickListener() {
@@ -151,34 +165,21 @@ public class ChooseProfileTypeActivity extends AppCompatActivity {
                                     Intent intent = result.getInvitationIntent();
                                     String deepLink = AppInviteReferral.getDeepLink(intent);
                                     String inviterId = getQueryString(deepLink,"id");
-
-                                    CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, ChooseProfileTypeActivity.this);
-                                    //Call<String> call = accountService.insertUser(user.getUid(),user.getEmail(),user.getDisplayName(),"");
-                                    Call<String> call = accountService.addSupervisor(inviterId);
-                                    call.enqueue(new Callback<String >() {
+                                    APIManager.addSupervisor(ChooseProfileTypeActivity.this, inviterId, new APICallbacks<String>() {
                                         @Override
-                                        public void onResponse(Call<String> call, Response<String> response) {
-                                            if (response.isSuccessful()) {
-                                                // user object available
-                                                Log.d("Response Successful: ", response.message());
-                                            } else {
-                                                Log.d("Response Failed: ", response.message());
-                                            }
+                                        public void successfulResponse(String s) {
+                                            Log.v("DeepLinkTest","Response - " + s);
                                         }
 
                                         @Override
-                                        public void onFailure(Call<String> call, Throwable t) {
-                                            // something went completely south (like no internet connection)
-                                            Log.d("Error", t.getMessage());
+                                        public void FailedResponse(String errorMessage) {
+
                                         }
                                     });
-
-
-                                    Log.v("DeepLinkTest","Deep link - " + deepLink);
-                                    Log.v("DeepLinkTest","inviterId - " + inviterId);
                                 } else {
                                     Log.d("DeepLinkTest", "getInvitation: no deep link found.");
                                 }
+
                             }
                         });
     }

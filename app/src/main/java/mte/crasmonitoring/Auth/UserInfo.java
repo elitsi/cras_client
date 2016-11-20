@@ -14,14 +14,17 @@ public class UserInfo {
     private String user_id;
     @SerializedName("picture")
     private String picture;
+    @SerializedName("fcm_token")
+    private String fcmToken;
 
-    public UserInfo(String displayName, String email, String uid, String pictureUri) {
+    public UserInfo(String displayName, String email, String uid, String pictureUri, String fcmToken) {
         this.name = displayName;
         if(name == null)
             name = "testUser";
         this.mail = email;
         this.user_id = uid;
         this.picture = pictureUri;
+        this.fcmToken = fcmToken;
     }
 
     public String getDisplayName() {
@@ -54,5 +57,13 @@ public class UserInfo {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }
