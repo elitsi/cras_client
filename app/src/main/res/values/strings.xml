@@ -6,4 +6,10 @@
     <string name="google_maps_package_name">com.google.android.apps.maps</string>
     <string name="invite_url_host">"f3a8n.app.goo.gl"</string>
     <string name="invite_url_deep_link">"http://www.cras.com?id="</string>
+    <string name="facebook_application_id" translatable="false">1611480429157485</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb1611480429157485</string>
+    <string name="facebook_app_id">1611480429157485</string>
+
+
+
 </resources>

@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ui.email.SignInActivity;
 import com.github.jksiezni.permissive.PermissionsGrantedListener;
 import com.github.jksiezni.permissive.PermissionsRefusedListener;
 import com.github.jksiezni.permissive.Permissive;
@@ -24,6 +26,8 @@ import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -55,34 +59,6 @@ public class ChooseProfileTypeActivity extends AppCompatActivity {
             ((TextView)(findViewById(R.id.mailTxt))).setText(user.getEmail());
             ((TextView)(findViewById(R.id.nameTxt))).setText(user.getDisplayName());
 
-            /*
-            CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, this);
-            //Call<String> call = accountService.insertUser(user.getUid(),user.getEmail(),user.getDisplayName(),"");
-            Call<ResponseBody> call = accountService.insertUser2(new UserInfo(user.getDisplayName(), user.getEmail(),user.getUid(),"testImage"));
-
-            call.enqueue(new Callback<ResponseBody>() {
-                     @Override
-                     public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
-                         if (response.isSuccessful()) {
-                             SharedPrefsUtils.saveUserId(ChooseProfileTypeActivity.this,user.getUid());
-
-                             checkInvitations();
-
-                         } else {
-                             Log.d("Response Failed: ", response.message());
-                         }
-                     }
-
-                @Override
-                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                         // something went completely south (like no internet connection)
-                         Log.d("Error", t.getMessage());
-                     }
-            });th
-
-
-            Toast.makeText(getApplicationContext(),call.toString(),Toast.LENGTH_LONG);
-            */
             Log.v("firebaseToken", "firebaseToken - " + FirebaseInstanceId.getInstance().getToken());
             UserInfo userInfo = new UserInfo(
                     user.getDisplayName(),
@@ -123,6 +99,22 @@ public class ChooseProfileTypeActivity extends AppCompatActivity {
                         startActivity(chooser);
                     }
                 }
+            }
+        });
+
+        (findViewById(R.id.btn_log_out)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AuthUI.getInstance()
+                        .signOut(ChooseProfileTypeActivity.this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // user is now signed out
+                                startActivity(new Intent(ChooseProfileTypeActivity.this, LoginActivity.class));
+                                finish();
+                            }
+                        });
+
             }
         });
 
