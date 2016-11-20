@@ -23,11 +23,17 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Auth.LoginActivity">
+        <activity android:name=".Auth.ChooseProfileTypeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:host="f3a8n.app.goo.gl" android:scheme="https"/>
             </intent-filter>
         </activity>
 
@@ -39,10 +45,10 @@
         <activity android:name=".MonitoringActivity"
             android:launchMode="singleTask"></activity>
 
-        <activity android:name=".MainActivity"
+        <activity android:name=".Auth.LoginActivity"
             android:launchMode="singleTask"></activity>
 
-        <activity android:name=".Auth.ChooseProfileType"
+        <activity android:name=".MainActivity"
             android:launchMode="singleTask"></activity>
 
         <service

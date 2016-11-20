@@ -9,6 +9,8 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface CrasAccountService {
@@ -22,5 +24,8 @@ public interface CrasAccountService {
 
     @POST("/add_user")
     Call<String> insertUser2(@Body UserInfo userInfo);
+
+    @GET("/add_user_supervisor")
+    Call<String> addSupervisor(@Header("sup_id") String supervisorId);
 
 }
