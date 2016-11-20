@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "424002551782",
+    "firebase_url": "https://cras-62663.firebaseio.com",
+    "project_id": "cras-62663",
+    "storage_bucket": "cras-62663.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:424002551782:android:cfabb4a7291d7817",
+        "android_client_info": {
+          "package_name": "mte.crasmonitoring"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "424002551782-mpm0ea1cq91iro82lcieqa35bv1em82i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mte.crasmonitoring",
+            "certificate_hash": "7CB60A5AEF1446BD3FA0560016A6E218729873B0"
+          }
+        },
+        {
+          "client_id": "424002551782-ppulfbhgbosokv8c0chcusnd0nsljumo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mte.crasmonitoring",
+            "certificate_hash": "377D8C63B7DEFF49CB296CEBF5918E6835D5AB2B"
+          }
+        },
+        {
+          "client_id": "424002551782-4a5kc2ekp4p39epj8uk245jmqrh645r9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhSw2Cv4m6sDb7c_LW4fPlSahgw6wSgCU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "424002551782-4a5kc2ekp4p39epj8uk245jmqrh645r9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
