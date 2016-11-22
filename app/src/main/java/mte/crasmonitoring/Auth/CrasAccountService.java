@@ -5,6 +5,11 @@ package mte.crasmonitoring.Auth;
  */
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import mte.crasmonitoring.user_lists.ResponseList;
+import mte.crasmonitoring.user_lists.Superviser;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -24,6 +29,6 @@ public interface CrasAccountService {
     Call<ResponseBody> addSupervisor(@Header("sup_id") String supervisorId);
 
     @GET("/get_supervisors")
-    Call<ResponseBody> getSupervisors(@Header("HTTP_USER_ID") String user_uid);
+    Call<List<Superviser>> getSupervisors(@Header("user_id") String user_uid);
 
 }
