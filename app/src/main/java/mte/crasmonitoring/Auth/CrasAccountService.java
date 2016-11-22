@@ -23,4 +23,7 @@ public interface CrasAccountService {
     @GET("/add_user_supervisor")
     Call<ResponseBody> addSupervisor(@Header("sup_id") String supervisorId);
 
+    @GET("/get_supervisors")
+    Call<ResponseBody> getSupervisors(@Header("HTTP_USER_ID") String user_uid);
+
 }

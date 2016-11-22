@@ -4,8 +4,11 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import mte.crasmonitoring.utils.SharedPrefsUtils;
 import okhttp3.ResponseBody;
@@ -17,6 +20,31 @@ import retrofit2.Callback;
  */
 
 public class APIManager {
+
+    public static void getSupervisors(final Context context, String user_uid, final APICallbacks<ResponseBody> apiCallbacks)
+    {
+        CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
+        Call<ResponseBody> call = accountService.getSupervisors(user_uid);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    apiCallbacks.successfulResponse(response.body());
+                } else {
+                    Log.d("Response Failed: ", response.message());
+                    apiCallbacks.FailedResponse(response.message());
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // something went completely south (like no internet connection)
+                Log.d("Error", t.getMessage());
+                apiCallbacks.FailedResponse(t.getMessage());
+            }
+        });
+    }
+
 
     public static void insertUser(final Context context, UserInfo userInfo, final APICallbacks<ResponseBody> apiCallbacks)
     {

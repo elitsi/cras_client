@@ -3,12 +3,15 @@ package mte.crasmonitoring.Auth;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import com.facebook.FacebookSdk;
+
+import com.facebook.appevents.AppEventsLogger;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ui.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
-
+import com.facebook.FacebookSdk;
 import java.util.Arrays;
+
+import mte.crasmonitoring.user_lists.ShowUserListsActivity;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -17,10 +20,11 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(getApplication());
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(LoginActivity.this, ChooseProfileTypeActivity.class));
+            startActivity(new Intent(LoginActivity.this, ShowUserListsActivity.class));
             finish();
         }
 
@@ -39,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             // user is signed in!
-            startActivity(new Intent(this, ChooseProfileTypeActivity.class));
+            startActivity(new Intent(this, ShowUserListsActivity.class));
             finish();
             return;
         }
