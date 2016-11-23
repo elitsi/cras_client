@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,6 +20,7 @@ import java.util.Locale;
 import java.util.Set;
 
 public class GeneralUtils {
+    private static final String TAG = GeneralUtils.class.getSimpleName();
     private static final Set<String> RTL;
     public static final int GET_SCREEN_HEIGHT = 1;
     public static final int GET_SCREEN_WIDTH = 2;
@@ -122,6 +124,16 @@ public class GeneralUtils {
         NetworkInfo activeNetworkInfo = connectivityManager
                 .getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static String getQueryString(String url, String tag) {
+        try {
+            Uri uri=Uri.parse(url);
+            return uri.getQueryParameter(tag);
+        }catch(Exception e){
+            Log.e(TAG,"getQueryString() " + e.getMessage());
+        }
+        return "";
     }
 
 }

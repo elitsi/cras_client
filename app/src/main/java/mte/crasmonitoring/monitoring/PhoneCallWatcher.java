@@ -10,11 +10,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.List;
-
-import mte.crasmonitoring.MainActivity;
 
 /**
  * Watches for call state changes and notifies attached listener.

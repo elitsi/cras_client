@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CrasMonitoring</string>
+    <string name="app_name">Cras</string>
     <string name="monitor_notification_title">You are being monitored</string>
     <string name="monitor_notification_context">You are being monitored by x</string>
     <string name="waze_package_name">com.waze</string>

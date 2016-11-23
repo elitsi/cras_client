@@ -18,9 +18,7 @@ import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.Calendar;
-
-import mte.crasmonitoring.MonitoringActivity;
+import mte.crasmonitoring.ui.activities.MonitoringActivity;
 import mte.crasmonitoring.R;
 import mte.crasmonitoring.eventbus.Events;
 

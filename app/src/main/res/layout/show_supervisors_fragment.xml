@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/showSupervisors">
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swiperefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
+            <android.support.v7.widget.RecyclerView
+                android:layout_marginTop="50dp"
+                android:id="@+id/remote_users_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
 
-    <TextView
-        android:gravity="top"
-        android:id="@+id/txtSupervisors"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <android.support.v7.widget.RecyclerView
-        android:layout_marginTop="50dp"
-        android:id="@+id/supervisors_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-
-</RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

@@ -22,4 +22,6 @@ public class Events {
 
     public static class AppViolationEvent {}
 
+    public static class RefreshRemoteUsersEvent {}
+
 }
