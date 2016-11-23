@@ -3,16 +3,11 @@ package mte.crasmonitoring.Auth;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseUser;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.io.IOException;
 import java.util.List;
 
-import mte.crasmonitoring.user_lists.ResponseList;
-import mte.crasmonitoring.user_lists.Superviser;
-import mte.crasmonitoring.utils.SharedPrefsUtils;
+import mte.crasmonitoring.user_lists.Supervised;
+import mte.crasmonitoring.user_lists.Supervisor;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,16 +18,16 @@ import retrofit2.Callback;
 
 public class APIManager {
 
-    public static void getSupervisors(final Context context, String user_uid, final APICallbacks<List<Superviser>> apiCallbacks)
+    public static void getSupervises(final Context context, String user_uid, final APICallbacks<List<Supervised>> apiCallbacks)
     {
         CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
-        Call<List<Superviser>> call = accountService.getSupervisors(user_uid);
+        Call<List<Supervised>> call = accountService.getSupervises(user_uid);
 
-        call.enqueue(new Callback<List<Superviser>>() {
+        call.enqueue(new Callback<List<Supervised>>() {
             @Override
-            public void onResponse(Call<List<Superviser>> call, retrofit2.Response<List<Superviser>> response) {
+            public void onResponse(Call<List<Supervised>> call, retrofit2.Response<List<Supervised>> response) {
                 if (response.isSuccessful()) {
-                    List<Superviser> sup = response.body();
+                    List<Supervised> sup = response.body();
                     apiCallbacks.successfulResponse(response.body());
                 } else {
                     Log.d("Response Failed: ", response.message());
@@ -40,7 +35,32 @@ public class APIManager {
                 }
             }
             @Override
-            public void onFailure(Call<List<Superviser>> call, Throwable t) {
+            public void onFailure(Call<List<Supervised>> call, Throwable t) {
+                // something went completely south (like no internet connection)
+                Log.d("Error", t.getMessage());
+                apiCallbacks.FailedResponse(t.getMessage());
+            }
+        });
+    }
+
+    public static void getSupervisors(final Context context, String user_uid, final APICallbacks<List<Supervisor>> apiCallbacks)
+    {
+        CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
+        Call<List<Supervisor>> call = accountService.getSupervisors(user_uid);
+
+        call.enqueue(new Callback<List<Supervisor>>() {
+            @Override
+            public void onResponse(Call<List<Supervisor>> call, retrofit2.Response<List<Supervisor>> response) {
+                if (response.isSuccessful()) {
+                    List<Supervisor> sup = response.body();
+                    apiCallbacks.successfulResponse(response.body());
+                } else {
+                    Log.d("Response Failed: ", response.message());
+                    apiCallbacks.FailedResponse(response.message());
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Supervisor>> call, Throwable t) {
                 // something went completely south (like no internet connection)
                 Log.d("Error", t.getMessage());
                 apiCallbacks.FailedResponse(t.getMessage());

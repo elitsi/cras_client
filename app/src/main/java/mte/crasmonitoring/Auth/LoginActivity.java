@@ -9,9 +9,14 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ui.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.facebook.FacebookSdk;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import java.util.Arrays;
 
 import mte.crasmonitoring.user_lists.ShowUserListsActivity;
+import mte.crasmonitoring.utils.SharedPrefsUtils;
+import okhttp3.ResponseBody;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -24,10 +29,32 @@ public class LoginActivity extends AppCompatActivity {
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
+
+            //tmp
+//            FirebaseUser user = auth.getCurrentUser();
+//            UserInfo userInfo = new UserInfo(
+//                    "test1",
+//                    "testMail1",
+//                    "1",
+//                    "testPic",
+//                    FirebaseInstanceId.getInstance().getToken()
+//            );
+//            APIManager.insertUser(this, userInfo, new APICallbacks<ResponseBody>() {
+//                @Override
+//                public void successfulResponse(ResponseBody responseBody) {
+//                }
+//
+//                @Override
+//                public void FailedResponse(String errorMessage) {}
+//            });
+
+
             Intent i = new Intent(getBaseContext(),ShowUserListsActivity.class);
             startActivity(i);
             finish();
+
         }
+
         else {
             startActivityForResult(
                     AuthUI.getInstance()

@@ -5,17 +5,13 @@ package mte.crasmonitoring.Auth;
  */
 
 
-import java.util.ArrayList;
 import java.util.List;
 
-import mte.crasmonitoring.user_lists.ResponseList;
-import mte.crasmonitoring.user_lists.Superviser;
-import okhttp3.Response;
+import mte.crasmonitoring.user_lists.Supervised;
+import mte.crasmonitoring.user_lists.Supervisor;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -29,6 +25,9 @@ public interface CrasAccountService {
     Call<ResponseBody> addSupervisor(@Header("sup_id") String supervisorId);
 
     @GET("/get_supervisors")
-    Call<List<Superviser>> getSupervisors(@Header("user_id") String user_uid);
+    Call<List<Supervisor>> getSupervisors(@Header("user_id") String user_uid);
+
+    @GET("/get_supervises")
+    Call<List<Supervised>> getSupervises(@Header("user_id") String user_uid);
 
 }

@@ -1,6 +1,7 @@
 package mte.crasmonitoring.user_lists;
 
 import android.app.ActionBar;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -32,6 +33,9 @@ public class ShowUserListsActivity extends AppCompatActivity  {
 
         pager.setAdapter(adapter);
         tabs.setupWithViewPager(pager);
+
+//        Fragment fragment = new ShowSupervisorsFragmemt();
+//        getSupportFragmentManager().beginTransaction().add(R.id.container,fragment).commit();
 
 
     }

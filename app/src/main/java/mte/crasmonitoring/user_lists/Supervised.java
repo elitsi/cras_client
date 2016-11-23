@@ -1,13 +1,15 @@
 package mte.crasmonitoring.user_lists;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by eli on 22/11/2016.
+ * Created by eli on 23/11/2016.
  */
 
-public class Superviser {
+public class Supervised {
+
+    @SerializedName("supervised_by")
+    String[] supervised_by;
     @SerializedName("picture")
     String picture;
     @SerializedName("name")
@@ -16,6 +18,14 @@ public class Superviser {
     String _id;
     @SerializedName("mail")
     String mail;
+
+
+    public Supervised(String name, String id, String mail , String picture){
+        this._id = id;
+        this.mail = mail;
+        this.name = name;
+        this.picture = picture;
+    }
 
     public String get_id() {
         return _id;
