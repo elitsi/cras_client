@@ -57,7 +57,6 @@ public final class ServiceGenerator {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         // set your desired log level
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-
         httpClient.addInterceptor(logging);
 
         Retrofit retrofit = builder.client(httpClient.build()).build();

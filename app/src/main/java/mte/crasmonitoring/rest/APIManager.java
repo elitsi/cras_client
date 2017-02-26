@@ -53,7 +53,6 @@ public class APIManager {
             @Override
             public void onResponse(Call<List<RemoteUser>> call, retrofit2.Response<List<RemoteUser>> response) {
                 if (response.isSuccessful()) {
-                    List<RemoteUser> sup = response.body();
                     apiCallbacks.successfulResponse(response.body());
                 } else {
                     Log.d("Response Failed: ", response.message());
@@ -127,6 +126,62 @@ public class APIManager {
     {
         CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
         Call<ResponseBody> call = accountService.sendMonitorRequest(supervisedId);
+        call.enqueue(new Callback<ResponseBody >() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+
+                    try {
+                        apiCallbacks.successfulResponse(response.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+
+                    apiCallbacks.successfulResponse(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+                apiCallbacks.successfulResponse(t.getMessage());
+            }
+        });
+    }
+
+    public static void acceptMonitorRequest(Context context, String supervisorId, final APICallbacks<String> apiCallbacks)
+    {
+        CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
+        Call<ResponseBody> call = accountService.acceptMonitorRequest(supervisorId);
+        call.enqueue(new Callback<ResponseBody >() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+
+                    try {
+                        apiCallbacks.successfulResponse(response.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+
+                    apiCallbacks.successfulResponse(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+                apiCallbacks.successfulResponse(t.getMessage());
+            }
+        });
+    }
+
+    public static void sendAppViolationEvent(Context context, String supervisorId, final APICallbacks<String> apiCallbacks)
+    {
+        CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
+        Call<ResponseBody> call = accountService.sendAppViolationEvent(supervisorId);
         call.enqueue(new Callback<ResponseBody >() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {

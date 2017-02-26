@@ -1,5 +1,6 @@
 package mte.crasmonitoring.ui.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
@@ -9,7 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import com.github.jksiezni.permissive.PermissionsGrantedListener;
+import com.github.jksiezni.permissive.PermissionsRefusedListener;
+import com.github.jksiezni.permissive.Permissive;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
@@ -25,6 +30,7 @@ import mte.crasmonitoring.rest.APICallbacks;
 import mte.crasmonitoring.rest.APIManager;
 import mte.crasmonitoring.ui.adapters.TabsPagerAdapter;
 import mte.crasmonitoring.utils.GeneralUtils;
+import mte.crasmonitoring.utils.PermissionsManager;
 import mte.crasmonitoring.utils.SharedPrefsUtils;
 
 /**
@@ -39,11 +45,39 @@ public class ShowUserListsActivity extends AppCompatActivity  {
         setContentView(R.layout.show_user_lists_activity);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
-
+        askForPermissions();
         setupViewPager();
 
         setupFab();
 
+    }
+
+    private void askForPermissions()
+    {
+        new Permissive.Request(Manifest.permission.BLUETOOTH, Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE, Manifest.permission.MODIFY_AUDIO_SETTINGS, Manifest.permission.PROCESS_OUTGOING_CALLS)
+                .whenPermissionsGranted(new PermissionsGrantedListener() {
+                    @Override
+                    public void onPermissionsGranted(String[] permissions) throws SecurityException {
+                        PermissionsManager.requestUsageStatsPermission(ShowUserListsActivity.this, new PermissionsManager.PermissionsListener() {
+                            @Override
+                            public void onPermissionsGranted() {
+                                PermissionsManager.requestOverlayPermission(ShowUserListsActivity.this, new PermissionsManager.PermissionsListener() {
+                                    @Override
+                                    public void onPermissionsGranted() {
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                })
+                .whenPermissionsRefused(new PermissionsRefusedListener() {
+                    @Override
+                    public void onPermissionsRefused(String[] permissions) {
+                        // given permissions are refused
+                        Toast.makeText(ShowUserListsActivity.this,"Please enable permission", Toast.LENGTH_LONG).show();                            }
+                })
+                .execute(ShowUserListsActivity.this);
     }
 
     @Override
@@ -149,6 +183,31 @@ public class ShowUserListsActivity extends AppCompatActivity  {
                 .append(userId)
                 .append("&apn=")
                 .append(packageName).toString();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == PermissionsManager.REQUEST_USAGE_PERMISSION)
+            PermissionsManager.requestUsageStatsPermission(ShowUserListsActivity.this, new PermissionsManager.PermissionsListener() {
+                @Override
+                public void onPermissionsGranted() {
+                    PermissionsManager.requestOverlayPermission(ShowUserListsActivity.this, new PermissionsManager.PermissionsListener() {
+                        @Override
+                        public void onPermissionsGranted() {
+
+                        }
+                    });
+                }
+            });
+        else if(requestCode == PermissionsManager.REQUEST_OVERLAY_PERMISSION)
+        {
+            PermissionsManager.requestOverlayPermission(ShowUserListsActivity.this, new PermissionsManager.PermissionsListener() {
+                @Override
+                public void onPermissionsGranted() {
+
+                }
+            });
+        }
+
     }
 
 }

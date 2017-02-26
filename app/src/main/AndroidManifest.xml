@@ -53,8 +53,6 @@
         <activity android:name=".ui.activities.MonitoringActivity"
             android:launchMode="singleTask"></activity>
 
-        <activity android:name=".auth.ChooseProfileTypeActivity"></activity>
-
         <activity android:name=".ui.activities.MainActivityOld"></activity>
 
         <activity android:name=".ui.activities.ShowUserListsActivity"></activity>

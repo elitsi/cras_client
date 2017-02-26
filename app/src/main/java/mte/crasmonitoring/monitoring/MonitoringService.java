@@ -18,9 +18,12 @@ import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
+import mte.crasmonitoring.rest.APICallbacks;
+import mte.crasmonitoring.rest.APIManager;
 import mte.crasmonitoring.ui.activities.MonitoringActivity;
 import mte.crasmonitoring.R;
 import mte.crasmonitoring.eventbus.Events;
+import mte.crasmonitoring.utils.Constants;
 
 
 public class MonitoringService extends Service {
@@ -33,8 +36,12 @@ public class MonitoringService extends Service {
     private MonitoringAbilityService speedLimitManager;
     private BroadcastReceiver stopServiceReceiver;
 
-    public static void start(Context context) {
-        context.startService(new Intent(context, MonitoringService.class));
+    private String supervisorId;
+
+    public static void start(Context context, String supervisorId) {
+        Intent intent = new Intent(context, MonitoringService.class);
+        intent.putExtra(Constants.MONITOR_SUPERVISOR_ID_KEY,supervisorId);
+        context.startService(intent);
     }
 
     public static void stop(Context context) {
@@ -48,6 +55,13 @@ public class MonitoringService extends Service {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if(intent != null)
+            supervisorId = intent.getStringExtra(Constants.MONITOR_SUPERVISOR_ID_KEY);
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
         registerReceivers();
@@ -55,6 +69,10 @@ public class MonitoringService extends Service {
         startWatchingCalls();
         startTrackingDrivingSpeed();
         createStickyNotification();
+    }
+
+    private void getSupervisorId()
+    {
     }
 
     @Override
@@ -75,10 +93,26 @@ public class MonitoringService extends Service {
                 Toast.makeText(getBaseContext(), "You are using an unapproved app.", Toast.LENGTH_SHORT).show();
                 Log.v("MonitoringUpdates", "You are using an unapproved app.");
                 EventBus.getDefault().post(new Events.AppViolationEvent());
+                sendAppViolationEvent();
             }
         });
 
         appsCheckerManager.startMonitoring();
+    }
+
+    private void sendAppViolationEvent()
+    {
+        APIManager.sendAppViolationEvent(getBaseContext(), supervisorId, new APICallbacks<String>() {
+            @Override
+            public void successfulResponse(String s) {
+
+            }
+
+            @Override
+            public void FailedResponse(String errorMessage) {
+
+            }
+        });
     }
 
     private void stopMonitoringApps() {
@@ -113,7 +147,7 @@ public class MonitoringService extends Service {
                 .setContentText(getString(R.string.monitor_notification_title))
                 .setContentTitle(getString(R.string.monitor_notification_title))
                 .setContentIntent(PendingIntent.getActivity(this, 0, intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT))
+                        PendingIntent.FLAG_CANCEL_CURRENT))
                 .setWhen(0)
                 .build();
         manager.notify(NOTIFICATION_ID, notification);

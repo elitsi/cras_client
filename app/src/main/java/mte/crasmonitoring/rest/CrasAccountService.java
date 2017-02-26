@@ -34,4 +34,10 @@ public interface CrasAccountService {
     @GET("/start_monitoring")
     Call<ResponseBody> sendMonitorRequest(@Header("to_monitor_id") String supervisedId);
 
+    @GET("/accept_monitoring")
+    Call<ResponseBody> acceptMonitorRequest(@Header("sup_id") String supervisedId);
+
+    @GET("/application_anomaly")
+    Call<ResponseBody> sendAppViolationEvent(@Header("sup_id") String supervisedId);
+
 }
