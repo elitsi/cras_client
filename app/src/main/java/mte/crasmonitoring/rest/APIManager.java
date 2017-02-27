@@ -88,6 +88,7 @@ public class APIManager {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // something went completely south (like no internet connection)
+                if(t == null) return;
                 Log.d("Error", t.getMessage());
                 apiCallbacks.FailedResponse(t.getMessage());
             }

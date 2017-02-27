@@ -66,7 +66,6 @@ public class FirebaseReceiver extends FirebaseMessagingService {
             openIntent.putExtra(Constants.MONITOR_OPEN_ACTIVITY_TYPE_KEY,Constants.MONITOR_OPEN_ACTIVITY_TYPE_ADDED_SUPERVISOR_VALUE);
             openIntent.putExtra(Constants.MONITOR_SUPERVISOR_ID_KEY,supervisorId);
         }
-
         else
             openIntent = getMainActivityIntent();
 

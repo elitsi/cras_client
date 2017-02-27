@@ -32,39 +32,9 @@ public class MonitoringActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitoring);
 
-        int flags = getIntent().getFlags();
-        boolean isAppLoadedFromHistory = (flags & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
-        if (isAppLoadedFromHistory)
-        {
-            if(!isMonitoringServiceRunning())
-            {
-                //App is started from history && monitor service is no running ==> there's no monitoring going on ==> move user to main activity.
-                startActivity(new Intent(this, ShowUserListsActivity.class));
-                finish();
-            }
-        }
-        else
-        {
-            //App is not from history ==> it's from firebase notification or local monitoring notification
-            Intent intent = getIntent();
-            if(savedInstanceState == null && TextUtils.equals(intent.getStringExtra(Constants.MONITOR_OPEN_ACTIVITY_TYPE_KEY),Constants.MONITOR_OPEN_ACTIVITY_TYPE_ADDED_SUPERVISOR_VALUE))
-            {
-                supervisorId = intent.getStringExtra(Constants.MONITOR_SUPERVISOR_ID_KEY);
-                APIManager.acceptMonitorRequest(getBaseContext(), supervisorId, new APICallbacks<String>() {
-                    @Override
-                    public void successfulResponse(String s)
-                    {
-                        MonitoringService.start(MonitoringActivity.this, supervisorId);
-                    }
-                    @Override
-                    public void FailedResponse(String errorMessage) {}
-                });
-            }
-        }
+        handlePreviousActivity(savedInstanceState);
 
         monitoringLogTv = (TextView) findViewById(R.id.tv_monitoring_log);
-
-
 
         (findViewById(R.id.btn_open_waze)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +70,39 @@ public class MonitoringActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    private void handlePreviousActivity(Bundle savedInstanceState)
+    {
+        int flags = getIntent().getFlags();
+        boolean isAppLoadedFromHistory = (flags & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
+        if (isAppLoadedFromHistory)
+        {
+            if(!isMonitoringServiceRunning())
+            {
+                //App is started from history && monitor service is no running ==> there's no monitoring going on ==> move user to main activity.
+                startActivity(new Intent(this, ShowUserListsActivity.class));
+                finish();
+            }
+        }
+        else
+        {
+            //App is not from history ==> it's from firebase notification or local monitoring notification
+            Intent intent = getIntent();
+            if(savedInstanceState == null && TextUtils.equals(intent.getStringExtra(Constants.MONITOR_OPEN_ACTIVITY_TYPE_KEY),Constants.MONITOR_OPEN_ACTIVITY_TYPE_ADDED_SUPERVISOR_VALUE))
+            {
+                supervisorId = intent.getStringExtra(Constants.MONITOR_SUPERVISOR_ID_KEY);
+                APIManager.acceptMonitorRequest(getBaseContext(), supervisorId, new APICallbacks<String>() {
+                    @Override
+                    public void successfulResponse(String s)
+                    {
+                        MonitoringService.start(MonitoringActivity.this, supervisorId);
+                    }
+                    @Override
+                    public void FailedResponse(String errorMessage) {}
+                });
+            }
+        }
     }
 
 

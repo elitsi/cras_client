@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.github.jksiezni.permissive.PermissionsGrantedListener;
 import com.github.jksiezni.permissive.PermissionsRefusedListener;
 import com.github.jksiezni.permissive.Permissive;
+import com.github.pwittchen.reactivenetwork.library.Connectivity;
+import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
@@ -32,6 +34,9 @@ import mte.crasmonitoring.ui.adapters.TabsPagerAdapter;
 import mte.crasmonitoring.utils.GeneralUtils;
 import mte.crasmonitoring.utils.PermissionsManager;
 import mte.crasmonitoring.utils.SharedPrefsUtils;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by eli on 21/11/2016.
@@ -47,9 +52,7 @@ public class ShowUserListsActivity extends AppCompatActivity  {
         setSupportActionBar(myToolbar);
         askForPermissions();
         setupViewPager();
-
         setupFab();
-
     }
 
     private void askForPermissions()

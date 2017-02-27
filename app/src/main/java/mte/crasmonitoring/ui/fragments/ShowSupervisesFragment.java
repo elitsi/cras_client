@@ -42,12 +42,12 @@ public class ShowSupervisesFragment extends RemoteUsersListFragmentBase {
                 APIManager.sendMonitorRequest(getContext(), supervised.getID(), new APICallbacks<String>() {
                     @Override
                     public void successfulResponse(String s) {
-
+                        Toast.makeText(getContext(), "Monitor request sent!", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void FailedResponse(String errorMessage) {
-                        Toast.makeText(getContext(),"Failuer! - " + errorMessage,Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(),"Failure! - " + errorMessage,Toast.LENGTH_LONG).show();
                     }
                 });
             }

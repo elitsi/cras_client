@@ -32,29 +32,8 @@ public class LoginActivity extends AppCompatActivity {
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
-
-            //tmp
-//            FirebaseUser user = auth.getCurrentUser();
-//            UserInfo userInfo = new UserInfo(
-//                    "test1",
-//                    "testMail1",
-//                    "1",
-//                    "testPic",
-//                    FirebaseInstanceId.getInstance().getToken()
-//            );
-//            APIManager.insertUser(this, userInfo, new APICallbacks<ResponseBody>() {
-//                @Override
-//                public void successfulResponse(ResponseBody responseBody) {
-//                }
-//
-//                @Override
-//                public void FailedResponse(String errorMessage) {}
-//            });
-
             getUserDetailsAndContinue();
-
         }
-
         else {
             startActivityForResult(
                     AuthUI.getInstance()
@@ -97,7 +76,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void FailedResponse(String errorMessage) {}
+                public void FailedResponse(String errorMessage) {
+                    Log.v("error", errorMessage);
+                }
             });
         }
     }

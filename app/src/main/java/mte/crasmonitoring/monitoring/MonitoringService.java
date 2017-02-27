@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
+import mte.crasmonitoring.model.SendViolationToApi;
 import mte.crasmonitoring.rest.APICallbacks;
 import mte.crasmonitoring.rest.APIManager;
 import mte.crasmonitoring.ui.activities.MonitoringActivity;
@@ -26,10 +27,12 @@ import mte.crasmonitoring.eventbus.Events;
 import mte.crasmonitoring.utils.Constants;
 
 
-public class MonitoringService extends Service {
+public class MonitoringService extends Service implements SendViolationToApi {
 
     private final static int NOTIFICATION_ID = 1234;
     private final static String STOP_SERVICE = MonitoringService.class.getPackage() + ".stop";
+
+    private NetworkCallsHolder networkCallsHolder;
 
     private MonitoringAbilityService mPhoneCallWatcher;
     private MonitoringAbilityService appsCheckerManager;
@@ -69,11 +72,15 @@ public class MonitoringService extends Service {
         startWatchingCalls();
         startTrackingDrivingSpeed();
         createStickyNotification();
+        monitorNetworkConnectivity();
     }
 
-    private void getSupervisorId()
+    private void monitorNetworkConnectivity()
     {
+        networkCallsHolder = new NetworkCallsHolder(getBaseContext(), this);
+        networkCallsHolder.startMonitoring();
     }
+
 
     @Override
     public void onDestroy() {
@@ -100,19 +107,28 @@ public class MonitoringService extends Service {
         appsCheckerManager.startMonitoring();
     }
 
-    private void sendAppViolationEvent()
+    public void sendAppViolationEvent()
     {
+        Log.v("NetworkCallsHolder test", "Sending sendAppViolationEvent");
+
         APIManager.sendAppViolationEvent(getBaseContext(), supervisorId, new APICallbacks<String>() {
             @Override
             public void successfulResponse(String s) {
-
+                Log.v("sendAppViolationEvent", "successfulResponse");
             }
 
             @Override
             public void FailedResponse(String errorMessage) {
+                Log.v("sendAppViolationEvent", "FailedResponse - " + errorMessage);
+                networkCallsHolder.addRequest(NetworkCallsHolder.VIOLATION_UNAPPROVED_APP);
 
             }
         });
+    }
+
+    @Override
+    public void sendDrivingViolationEvent() {
+
     }
 
     private void stopMonitoringApps() {
