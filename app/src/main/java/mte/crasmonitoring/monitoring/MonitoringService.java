@@ -12,6 +12,7 @@ import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -68,7 +69,7 @@ public class MonitoringService extends Service implements SendViolationToApi {
     @Override
     public void onCreate() {
         super.onCreate();
-        EventBus.getDefault().register(this);
+
         registerReceivers();
         startMonitoringApps();
         startWatchingCalls();
@@ -93,7 +94,6 @@ public class MonitoringService extends Service implements SendViolationToApi {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
         stopMonitoringApps();
         removeNotification();
         unregisterReceivers();
@@ -145,6 +145,7 @@ public class MonitoringService extends Service implements SendViolationToApi {
     }
 
     private void registerReceivers() {
+        EventBus.getDefault().register(this);
         stopServiceReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -155,6 +156,7 @@ public class MonitoringService extends Service implements SendViolationToApi {
     }
 
     private void unregisterReceivers() {
+        EventBus.getDefault().unregister(this);
         unregisterReceiver(stopServiceReceiver);
     }
 
@@ -165,7 +167,8 @@ public class MonitoringService extends Service implements SendViolationToApi {
 
         NotificationManager manager = ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
         Notification notification = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.eye_icon)
+                .setColor(ContextCompat.getColor(getBaseContext(), R.color.colorPrimary))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setAutoCancel(false)
