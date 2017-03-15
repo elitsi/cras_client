@@ -16,6 +16,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.Arrays;
 
+import mte.crasmonitoring.R;
 import mte.crasmonitoring.model.UserInfo;
 import mte.crasmonitoring.rest.APICallbacks;
 import mte.crasmonitoring.rest.APIManager;
@@ -40,8 +41,9 @@ public class LoginActivity extends AppCompatActivity {
             startActivityForResult(
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
+                            .setLogo(R.drawable.eye_full)
                             .setIsSmartLockEnabled(false)
-                            .setProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                            .setProviders(Arrays.asList(
                                     new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
                                     new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()))
                             .build(),
