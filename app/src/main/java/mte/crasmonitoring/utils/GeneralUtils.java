@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -134,6 +135,13 @@ public class GeneralUtils {
             Log.e(TAG,"getQueryString() " + e.getMessage());
         }
         return "";
+    }
+
+    public static <T> boolean listEqualsNoOrder(List<T> l1, List<T> l2) {
+        final Set<T> s1 = new HashSet<>(l1);
+        final Set<T> s2 = new HashSet<>(l2);
+
+        return s1.equals(s2);
     }
 
 }

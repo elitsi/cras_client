@@ -36,7 +36,7 @@ public class SpeedLimitManager extends MonitoringBase {
             public void onLocationChanged(Location location) {
                 location.getLatitude();
                 int speedKm = (int) (location.getSpeed()*3.6);
-                //Toast.makeText(getBaseContext(), "Current speed:" + speedKm, Toast.LENGTH_SHORT).show()
+
                 if(speedKm > SPEED_LIMIT)
                 {
                     lastKnownSpeedViolation = speedKm;

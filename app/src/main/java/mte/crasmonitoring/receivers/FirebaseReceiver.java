@@ -7,15 +7,15 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
-import android.text.TextUtils;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import mte.crasmonitoring.rest.APICallbacks;
-import mte.crasmonitoring.rest.APIManager;
-import mte.crasmonitoring.ui.activities.MainActivityOld;
+import org.greenrobot.eventbus.EventBus;
+
+import mte.crasmonitoring.eventbus.Events;
 import mte.crasmonitoring.R;
 import mte.crasmonitoring.ui.activities.MonitoringActivity;
 import mte.crasmonitoring.ui.activities.ShowUserListsActivity;
@@ -59,15 +59,36 @@ public class FirebaseReceiver extends FirebaseMessagingService {
         String notificationMsg = remoteMessage.getData().get("msg");
         String notificationType = remoteMessage.getData().get("type");
         Intent openIntent;
-        if(TextUtils.equals(notificationType,"monitor request"))
+
+        switch (notificationType)
         {
-            openIntent = getMonitoringActivityIntent();
-            String supervisorId = remoteMessage.getData().get("sup_id");
-            openIntent.putExtra(Constants.MONITOR_OPEN_ACTIVITY_TYPE_KEY,Constants.MONITOR_OPEN_ACTIVITY_TYPE_ADDED_SUPERVISOR_VALUE);
-            openIntent.putExtra(Constants.MONITOR_SUPERVISOR_ID_KEY,supervisorId);
+            case "monitor request":
+                openIntent = getMonitoringActivityIntent();
+                String supervisorId = remoteMessage.getData().get("sup_id");
+                openIntent.putExtra(Constants.MONITOR_OPEN_ACTIVITY_TYPE_KEY,Constants.MONITOR_OPEN_ACTIVITY_TYPE_ADDED_SUPERVISOR_VALUE);
+                openIntent.putExtra(Constants.MONITOR_SUPERVISOR_ID_KEY,supervisorId);
+                break;
+            case "monitoring approved":
+            case "monitoring stopped by supervise":
+                EventBus.getDefault().post(new Events.RefreshRemoteUsersEvent());
+                openIntent = getMainActivityIntent();
+                break;
+            case "monitoring stopped by supervisor":
+                EventBus.getDefault().post(new Events.StopMonitorRequestEvent());
+                openIntent = getMainActivityIntent();
+                break;
+            default:
+                openIntent = getMainActivityIntent();
+
         }
-        else
-            openIntent = getMainActivityIntent();
+//        else if(TextUtils.equals(notificationType,"monitoring approved") || TextUtils.equals(notificationType,"monitoring stopped by supervise"))
+//        {
+//            EventBus.getDefault().post(new Events.RefreshRemoteUsersEvent());
+//            openIntent = getMainActivityIntent();
+//        }
+//        else if(TextUtils.equals(notificationType,"monitoring approved"))
+//        else
+//            openIntent = getMainActivityIntent();
 
         sendNotification(notificationMsg, openIntent);
 
@@ -86,11 +107,13 @@ public class FirebaseReceiver extends FirebaseMessagingService {
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.eye_icon)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(messageBody)
                 .setAutoCancel(true)
+                .setColor(ContextCompat.getColor(getBaseContext(), R.color.colorPrimary))
                 .setSound(defaultSoundUri)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(messageBody))
                 .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =

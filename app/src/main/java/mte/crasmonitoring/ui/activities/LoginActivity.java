@@ -15,6 +15,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.Arrays;
 
+import mte.crasmonitoring.R;
 import mte.crasmonitoring.model.UserInfo;
 import mte.crasmonitoring.rest.APICallbacks;
 import mte.crasmonitoring.rest.APIManager;
@@ -27,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(getApplication());
 
@@ -76,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void FailedResponse(String errorMessage) {
+                public void failedResponse(String errorMessage) {
                     Log.v("error", errorMessage);
                 }
             });

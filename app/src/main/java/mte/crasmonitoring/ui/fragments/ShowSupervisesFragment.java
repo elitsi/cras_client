@@ -38,18 +38,35 @@ public class ShowSupervisesFragment extends RemoteUsersListFragmentBase {
         remoteUsersAdapter.setSupervisesFragmentListener(new SupervisesFragmentListener() {
             @Override
             public void onSupervisedClick(RemoteUser supervised) {
-                //Toast.makeText(getContext(),"Clicked " + supervisor.getName(),Toast.LENGTH_LONG).show();
-                APIManager.sendMonitorRequest(getContext(), supervised.getID(), new APICallbacks<String>() {
-                    @Override
-                    public void successfulResponse(String s) {
-                        Toast.makeText(getContext(), "Monitor request sent!", Toast.LENGTH_SHORT).show();
-                    }
 
-                    @Override
-                    public void FailedResponse(String errorMessage) {
-                        Toast.makeText(getContext(),"Failure! - " + errorMessage,Toast.LENGTH_LONG).show();
-                    }
-                });
+                if(supervised.getStatus())
+                {
+                    APIManager.stopMonitorBySupervisor(getContext(), supervised.getID(), new APICallbacks<String>() {
+                        @Override
+                        public void successfulResponse(String s) {
+                            getRemoteUsers();
+                        }
+
+                        @Override
+                        public void failedResponse(String errorMessage) {
+
+                        }
+                    });
+                }
+                else
+                {
+                    APIManager.sendMonitorRequest(getContext(), supervised.getID(), new APICallbacks<String>() {
+                        @Override
+                        public void successfulResponse(String s) {
+                            Toast.makeText(getContext(), "Monitor request sent!", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void failedResponse(String errorMessage) {
+                            Toast.makeText(getContext(),"Failure! - " + errorMessage,Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
         });
     }
@@ -64,7 +81,7 @@ public class ShowSupervisesFragment extends RemoteUsersListFragmentBase {
             }
 
             @Override
-            public void FailedResponse(String errorMessage) {
+            public void failedResponse(String errorMessage) {
 
             }
         });

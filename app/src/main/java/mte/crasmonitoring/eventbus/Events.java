@@ -24,4 +24,6 @@ public class Events {
 
     public static class RefreshRemoteUsersEvent {}
 
+    public static class StopMonitorRequestEvent {}
+
 }

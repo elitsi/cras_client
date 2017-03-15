@@ -6,5 +6,5 @@ package mte.crasmonitoring.rest;
 
 public interface APICallbacks<T> {
     void successfulResponse(T t);
-    void FailedResponse(String errorMessage);
+    void failedResponse(String errorMessage);
 }

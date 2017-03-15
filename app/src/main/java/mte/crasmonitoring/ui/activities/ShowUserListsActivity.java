@@ -140,7 +140,7 @@ public class ShowUserListsActivity extends AppCompatActivity  {
                                             }
 
                                             @Override
-                                            public void FailedResponse(String errorMessage) {
+                                            public void failedResponse(String errorMessage) {
 
                                             }
                                         });

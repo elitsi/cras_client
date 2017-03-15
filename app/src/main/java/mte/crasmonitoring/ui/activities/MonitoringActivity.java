@@ -1,7 +1,6 @@
 package mte.crasmonitoring.ui.activities;
 
 import android.app.ActivityManager;
-import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,7 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import net.danlew.android.joda.DateUtils;
 
@@ -19,22 +21,44 @@ import org.joda.time.DateTime;
 
 import mte.crasmonitoring.R;
 import mte.crasmonitoring.eventbus.Events;
+import mte.crasmonitoring.model.RemoteUser;
 import mte.crasmonitoring.monitoring.MonitoringService;
 import mte.crasmonitoring.rest.APICallbacks;
 import mte.crasmonitoring.rest.APIManager;
 import mte.crasmonitoring.utils.Constants;
 
 public class MonitoringActivity extends AppCompatActivity {
-    TextView monitoringLogTv;
+   // TextView monitoringLogTv;
     private String supervisorId;
+    private TextView tvSupName;
+    private ImageView ivSupImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitoring);
-
+        tvSupName = (TextView) findViewById(R.id.tv_sup_name);
+        ivSupImage = (ImageView) findViewById(R.id.iv_sup);
         handlePreviousActivity(savedInstanceState);
 
-        monitoringLogTv = (TextView) findViewById(R.id.tv_monitoring_log);
+        APIManager.getUser(this, supervisorId, new APICallbacks<RemoteUser>() {
+            @Override
+            public void successfulResponse(RemoteUser remoteUser) {
+                tvSupName.setText(remoteUser.getName());
+                Glide
+                        .with(getBaseContext())
+                        .load(remoteUser.getPicture())
+                        .dontAnimate()
+                        .placeholder(R.drawable.user_placeholder)
+                        .into(ivSupImage);
+            }
+
+            @Override
+            public void failedResponse(String errorMessage) {
+
+            }
+        });
+
+        //monitoringLogTv = (TextView) findViewById(R.id.tv_monitoring_log);
 
         (findViewById(R.id.btn_open_waze)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +77,7 @@ public class MonitoringActivity extends AppCompatActivity {
         (findViewById(R.id.btn_stop_monitoring)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                APIManager.stopMonitorBySupervise(getBaseContext(), supervisorId, null);
                 MonitoringService.stop(getBaseContext());
                 finish();
             }
@@ -71,6 +96,8 @@ public class MonitoringActivity extends AppCompatActivity {
         }
         return false;
     }
+
+
 
     private void handlePreviousActivity(Bundle savedInstanceState)
     {
@@ -99,7 +126,7 @@ public class MonitoringActivity extends AppCompatActivity {
                         MonitoringService.start(MonitoringActivity.this, supervisorId);
                     }
                     @Override
-                    public void FailedResponse(String errorMessage) {}
+                    public void failedResponse(String errorMessage) {}
                 });
             }
         }
@@ -135,29 +162,35 @@ public class MonitoringActivity extends AppCompatActivity {
     }
 
     @Subscribe
+    public void onStopMonitorRequest(Events.StopMonitorRequestEvent stopMonitorRequestEvent)
+    {
+        finish();
+    }
+
+    @Subscribe
     public void onDrivingSpeedViolationEvent(Events.DrivingLimitViolationEvent drivingLimitViolationEvent)
     {
 
-        StringBuilder stringBuilder = new StringBuilder().append(monitoringLogTv.getText().toString())
-                .append("\n")
-                .append("Driving limit event - speed - ")
-                .append(drivingLimitViolationEvent.getDrivingSpeed())
-                .append(", at - ")
-                .append(DateUtils.formatDateTime(this, DateTime.now(), DateUtils.FORMAT_SHOW_TIME));
-
-        monitoringLogTv.setText(stringBuilder.toString());
+//        StringBuilder stringBuilder = new StringBuilder().append(monitoringLogTv.getText().toString())
+//                .append("\n")
+//                .append("Driving limit event - speed - ")
+//                .append(drivingLimitViolationEvent.getDrivingSpeed())
+//                .append(", at - ")
+//                .append(DateUtils.formatDateTime(this, DateTime.now(), DateUtils.FORMAT_SHOW_TIME));
+//
+//        monitoringLogTv.setText(stringBuilder.toString());
     }
 
     @Subscribe
     public void onAppViloationEvent(Events.AppViolationEvent appViolationEvent)
     {
-        StringBuilder stringBuilder = new StringBuilder().append(monitoringLogTv.getText().toString())
-                .append("\n")
-                .append("App event ")
-                .append("at - ")
-                .append(DateUtils.formatDateTime(this, DateTime.now(), DateUtils.FORMAT_SHOW_TIME));
-
-        monitoringLogTv.setText(stringBuilder.toString());
+//        StringBuilder stringBuilder = new StringBuilder().append(monitoringLogTv.getText().toString())
+//                .append("\n")
+//                .append("App event ")
+//                .append("at - ")
+//                .append(DateUtils.formatDateTime(this, DateTime.now(), DateUtils.FORMAT_SHOW_TIME));
+//
+//        monitoringLogTv.setText(stringBuilder.toString());
     }
 
 }

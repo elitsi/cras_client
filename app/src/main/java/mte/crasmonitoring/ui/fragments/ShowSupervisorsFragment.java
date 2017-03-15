@@ -19,7 +19,7 @@ public class ShowSupervisorsFragment extends RemoteUsersListFragmentBase {
                 gotUsers(sup);
             }
             @Override
-            public void FailedResponse(String errorMessage) {
+            public void failedResponse(String errorMessage) {
             }
         });
     }

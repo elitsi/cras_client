@@ -1,5 +1,6 @@
 package mte.crasmonitoring.ui.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -13,23 +14,30 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import net.danlew.android.joda.DateUtils;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 import mte.crasmonitoring.R;
+import mte.crasmonitoring.eventbus.Events;
 import mte.crasmonitoring.model.RemoteUser;
 import mte.crasmonitoring.ui.fragments.RemoteUsersListFragmentBase;
 import mte.crasmonitoring.ui.fragments.ShowSupervisesFragment;
+import mte.crasmonitoring.utils.GeneralUtils;
 
 
 public class RemoteUsersAdapter extends RecyclerView.Adapter<RemoteUsersAdapter.RemoteUserHolder> {
     private static final String TAG = RemoteUsersAdapter.class.getSimpleName();
     protected List<RemoteUser> supList;
-    private final Context context;
+    private final Activity activity;
     private int type;
     private ShowSupervisesFragment.SupervisesFragmentListener supervisorsFragmentListener;
-    public RemoteUsersAdapter(List<RemoteUser> supList, Context context, int type) {
+    public RemoteUsersAdapter(List<RemoteUser> supList, Activity activity, int type) {
         this.supList = supList;
-        this.context = context;
+        this.activity = activity;
         this.type = type;
     }
 
@@ -50,7 +58,7 @@ public class RemoteUsersAdapter extends RecyclerView.Adapter<RemoteUsersAdapter.
         if(!TextUtils.isEmpty(remoteUser.getPicture()))
         {
             Glide
-                    .with(context)
+                    .with(activity)
                     .load(remoteUser.getPicture())
                     .placeholder(R.drawable.user_placeholder)
                     .dontAnimate()
@@ -76,7 +84,9 @@ public class RemoteUsersAdapter extends RecyclerView.Adapter<RemoteUsersAdapter.
     }
 
     private void setupSuperviser(RemoteUsersAdapter.RemoteUserHolder remoteUserHolder, final RemoteUser supervised)
-    {        remoteUserHolder.btnMonitor.setVisibility(View.VISIBLE);
+    {
+        remoteUserHolder.btnMonitor.setVisibility(View.VISIBLE);
+        remoteUserHolder.btnMonitor.setText(supervised.getStatus() ? "Stop monitoring" : "Monitor");
         if(supervisorsFragmentListener != null)
         {
             remoteUserHolder.btnMonitor.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +96,6 @@ public class RemoteUsersAdapter extends RecyclerView.Adapter<RemoteUsersAdapter.
                 }
             });
         }
-
     }
 
     @Override
@@ -113,9 +122,21 @@ public class RemoteUsersAdapter extends RecyclerView.Adapter<RemoteUsersAdapter.
 
     }
 
+
+
     public void setList(List<RemoteUser> supList)
     {
+//        if(GeneralUtils.listEqualsNoOrder(supList,this.supList))
+//        {
+//            return;
+//        }
         this.supList = supList;
-        notifyDataSetChanged();
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+
     }
 }

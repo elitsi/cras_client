@@ -1,7 +1,10 @@
 package mte.crasmonitoring.rest;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,14 +35,17 @@ public class APIManager {
                     apiCallbacks.successfulResponse(response.body());
                 } else {
                     Log.d("Response Failed: ", response.message());
-                    apiCallbacks.FailedResponse(response.message());
+                    apiCallbacks.failedResponse(response.message());
                 }
             }
             @Override
             public void onFailure(Call<List<RemoteUser>> call, Throwable t) {
-                // something went completely south (like no internet connection)
-                Log.d("Error", t.getMessage());
-                apiCallbacks.FailedResponse(t.getMessage());
+                if(t != null && !TextUtils.isEmpty(t.getMessage()))
+                {
+                    Log.d("Error", t.getMessage());
+                    apiCallbacks.failedResponse(t.getMessage());
+                }
+
             }
         });
     }
@@ -56,14 +62,14 @@ public class APIManager {
                     apiCallbacks.successfulResponse(response.body());
                 } else {
                     Log.d("Response Failed: ", response.message());
-                    apiCallbacks.FailedResponse(response.message());
+                    apiCallbacks.failedResponse(response.message());
                 }
             }
             @Override
             public void onFailure(Call<List<RemoteUser>> call, Throwable t) {
                 // something went completely south (like no internet connection)
                 Log.d("Error", t.getMessage());
-                apiCallbacks.FailedResponse(t.getMessage());
+                apiCallbacks.failedResponse(t.getMessage());
             }
         });
     }
@@ -82,7 +88,7 @@ public class APIManager {
 
                 } else {
                     Log.d("Response Failed: ", response.message());
-                    apiCallbacks.FailedResponse(response.message());
+                    apiCallbacks.failedResponse(response.message());
                 }
             }
             @Override
@@ -90,7 +96,7 @@ public class APIManager {
                 // something went completely south (like no internet connection)
                 if(t == null) return;
                 Log.d("Error", t.getMessage());
-                apiCallbacks.FailedResponse(t.getMessage());
+                apiCallbacks.failedResponse(t.getMessage());
             }
         });
     }
@@ -111,14 +117,74 @@ public class APIManager {
                     }
                 } else {
 
-                    apiCallbacks.successfulResponse(response.message());
+                    apiCallbacks.failedResponse(response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.d("Error", t.getMessage());
-                apiCallbacks.successfulResponse(t.getMessage());
+                apiCallbacks.failedResponse(t.getMessage());
+            }
+        });
+    }
+
+    public static void stopMonitorBySupervise(Context context, String supervisorId, final APICallbacks<String> apiCallbacks)
+    {
+        CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
+        Call<ResponseBody> call = accountService.stopMonitorBySupervise(supervisorId);
+        call.enqueue(new Callback<ResponseBody >() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+
+                    try {
+                        if(apiCallbacks != null)
+                            apiCallbacks.successfulResponse(response.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    if(apiCallbacks != null)
+                        apiCallbacks.failedResponse(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+                if(apiCallbacks != null)
+                    apiCallbacks.failedResponse(t.getMessage());
+            }
+        });
+    }
+
+    public static void stopMonitorBySupervisor(Context context, String superviseId, final APICallbacks<String> apiCallbacks)
+    {
+        CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
+        Call<ResponseBody> call = accountService.stopMonitorBySupervisor(superviseId);
+        call.enqueue(new Callback<ResponseBody >() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+
+                    try {
+                        if(apiCallbacks != null)
+                            apiCallbacks.successfulResponse(response.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    if(apiCallbacks != null)
+                        apiCallbacks.failedResponse(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+                if(apiCallbacks != null)
+                    apiCallbacks.failedResponse(t.getMessage());
             }
         });
     }
@@ -139,14 +205,14 @@ public class APIManager {
                     }
                 } else {
 
-                    apiCallbacks.successfulResponse(response.message());
+                    apiCallbacks.failedResponse(response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.d("Error", t.getMessage());
-                apiCallbacks.successfulResponse(t.getMessage());
+                apiCallbacks.failedResponse(t.getMessage());
             }
         });
     }
@@ -167,14 +233,36 @@ public class APIManager {
                     }
                 } else {
 
-                    apiCallbacks.successfulResponse(response.message());
+                    apiCallbacks.failedResponse(response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.d("Error", t.getMessage());
-                apiCallbacks.successfulResponse(t.getMessage());
+                apiCallbacks.failedResponse(t.getMessage());
+            }
+        });
+    }
+
+    public static void getUser(Context context, String userId, final APICallbacks<RemoteUser> apiCallbacks)
+    {
+        CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
+        Call<RemoteUser> call = accountService.getUser(userId);
+        call.enqueue(new Callback<RemoteUser >() {
+            @Override
+            public void onResponse(Call<RemoteUser> call, retrofit2.Response<RemoteUser> response) {
+                if (response.isSuccessful()) {
+                    apiCallbacks.successfulResponse(response.body());
+                } else {
+                    apiCallbacks.failedResponse(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RemoteUser> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+                apiCallbacks.failedResponse(t.getMessage());
             }
         });
     }

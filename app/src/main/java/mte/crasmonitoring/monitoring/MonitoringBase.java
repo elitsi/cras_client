@@ -53,5 +53,4 @@ public abstract class MonitoringBase implements MonitoringAbilityService{
             timeoutExecutor.schedule(checkTimeoutRunnable, CHECKING_TIMEOUT, TimeUnit.SECONDS);
         }
     }
-
 }

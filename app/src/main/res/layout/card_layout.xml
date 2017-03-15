@@ -48,9 +48,10 @@
             android:elevation="5dp"
             android:textSize="14sp"
             android:background="@drawable/start_monitor_button_background"
+            android:minHeight="30dp"
             android:layout_below="@+id/tvName"
             android:layout_alignStart="@+id/tvName"
-            android:minHeight="30dp"
+            android:padding="7dp"
             android:layout_marginTop="7dp" />
 
     </RelativeLayout>

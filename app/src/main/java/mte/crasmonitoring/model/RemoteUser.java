@@ -9,19 +9,36 @@ import com.google.gson.annotations.SerializedName;
 
 public class RemoteUser {
     @SerializedName("picture")
-    String picture;
+    private String picture;
     @SerializedName("name")
-    String name;
+    private String name;
     @SerializedName("_id")
-    String id;
+    private String id;
     @SerializedName("mail")
-    String mail;
+    private String mail;
+    private boolean status;
 
-    public RemoteUser(String name, String id, String mail , String picture){
+    public RemoteUser(String name, String id, String mail, String picture, boolean status){
         this.id = id;
         this.mail = mail;
         this.name = name;
         this.picture = picture;
+        this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RemoteUser that = (RemoteUser) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
     }
 
     public String getID() {
@@ -54,5 +71,13 @@ public class RemoteUser {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

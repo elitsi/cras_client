@@ -64,10 +64,21 @@ public abstract class RemoteUsersListFragmentBase extends Fragment {
             }
         });
 
-        getRemoteUsers();
+
 
     }
 
+    @Subscribe
+    public void onRefreshUsersRequestEvent(Events.RefreshRemoteUsersEvent refreshRemoteUsersEvent)
+    {
+        getRemoteUsers();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getRemoteUsers();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,7 +103,7 @@ public abstract class RemoteUsersListFragmentBase extends Fragment {
     {
         if(remoteUsersAdapter == null)
         {
-            remoteUsersAdapter = new RemoteUsersAdapter(remoteUsers,getContext(), getType());
+            remoteUsersAdapter = new RemoteUsersAdapter(remoteUsers,getActivity(), getType());
             AlphaAnimatorAdapter animatorAdapter = new AlphaAnimatorAdapter(remoteUsersAdapter, recList);
             recList.setAdapter(animatorAdapter);
         }

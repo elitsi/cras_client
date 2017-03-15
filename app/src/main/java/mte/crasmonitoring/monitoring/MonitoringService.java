@@ -17,6 +17,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import mte.crasmonitoring.model.SendViolationToApi;
 import mte.crasmonitoring.rest.APICallbacks;
@@ -67,6 +68,7 @@ public class MonitoringService extends Service implements SendViolationToApi {
     @Override
     public void onCreate() {
         super.onCreate();
+        EventBus.getDefault().register(this);
         registerReceivers();
         startMonitoringApps();
         startWatchingCalls();
@@ -81,10 +83,17 @@ public class MonitoringService extends Service implements SendViolationToApi {
         networkCallsHolder.startMonitoring();
     }
 
+    @Subscribe
+    public void onStopMonitorRequest(Events.StopMonitorRequestEvent stopMonitorRequestEvent)
+    {
+        stop(getBaseContext());
+    }
+
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         stopMonitoringApps();
         removeNotification();
         unregisterReceivers();
@@ -118,7 +127,7 @@ public class MonitoringService extends Service implements SendViolationToApi {
             }
 
             @Override
-            public void FailedResponse(String errorMessage) {
+            public void failedResponse(String errorMessage) {
                 Log.v("sendAppViolationEvent", "FailedResponse - " + errorMessage);
                 networkCallsHolder.addRequest(NetworkCallsHolder.VIOLATION_UNAPPROVED_APP);
 
