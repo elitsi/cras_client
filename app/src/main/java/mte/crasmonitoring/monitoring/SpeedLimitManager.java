@@ -7,6 +7,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 
+import mte.crasmonitoring.rest.APICallbacks;
+import mte.crasmonitoring.rest.APIManager;
+
 /**
  * Created by Mickael on 11/17/2016.
  */
@@ -33,18 +36,27 @@ public class SpeedLimitManager extends MonitoringBase {
 
         // Define a listener that responds to location updates
         locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                location.getLatitude();
-                int speedKm = (int) (location.getSpeed()*3.6);
+            public void onLocationChanged(final Location location) {
+                APIManager.getSpeedLimit(context, location.getLatitude(), location.getLongitude(), new APICallbacks<Double>() {
+                    @Override
+                    public void successfulResponse(Double speedLimit) {
+                        int speedKm = (int) (location.getSpeed()*3.6);
 
-                if(speedKm > SPEED_LIMIT)
-                {
-                    lastKnownSpeedViolation = speedKm;
-                    didBad();
+                        if(speedKm > speedLimit)
+                        {
+                            lastKnownSpeedViolation = speedKm;
+                            didBad();
 
-                }
-                else
-                    didGood();
+                        }
+                        else
+                            didGood();
+                    }
+
+                    @Override
+                    public void failedResponse(String errorMessage) {
+
+                    }
+                });
 
             }
 

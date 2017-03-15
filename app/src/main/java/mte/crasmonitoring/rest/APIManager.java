@@ -74,6 +74,30 @@ public class APIManager {
         });
     }
 
+    public static void getSpeedLimit(final Context context, double latitude, double longitude, final APICallbacks<Double> apiCallbacks)
+    {
+        CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
+        Call<Double> call = accountService.getSpeedLimit(latitude,longitude );
+
+        call.enqueue(new Callback<Double>() {
+            @Override
+            public void onResponse(Call<Double> call, retrofit2.Response<Double> response) {
+                if (response.isSuccessful()) {
+                    apiCallbacks.successfulResponse(response.body());
+                } else {
+                    Log.d("Response Failed: ", response.message());
+                    apiCallbacks.failedResponse(response.message());
+                }
+            }
+            @Override
+            public void onFailure(Call<Double> call, Throwable t) {
+                // something went completely south (like no internet connection)
+                Log.d("Error", t.getMessage());
+                apiCallbacks.failedResponse(t.getMessage());
+            }
+        });
+    }
+
 
     public static void insertUser(final Context context, UserInfo userInfo, final APICallbacks<ResponseBody> apiCallbacks)
     {
