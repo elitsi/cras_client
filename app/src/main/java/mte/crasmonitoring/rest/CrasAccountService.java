@@ -49,4 +49,7 @@ public interface CrasAccountService {
     @GET("/get_user_by_id")
     Call<RemoteUser> getUser(@Header("user_to_get") String userToGet);
 
+    @GET("/get_speed_limit")
+    Call<Double> getSpeedLimit(@Header("latitude") double latitude,@Header("latitude") double longitude);
+
 }
