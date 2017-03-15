@@ -12,17 +12,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.github.jksiezni.permissive.PermissionsGrantedListener;
 import com.github.jksiezni.permissive.PermissionsRefusedListener;
 import com.github.jksiezni.permissive.Permissive;
-import com.github.pwittchen.reactivenetwork.library.Connectivity;
-import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -34,9 +35,6 @@ import mte.crasmonitoring.ui.adapters.TabsPagerAdapter;
 import mte.crasmonitoring.utils.GeneralUtils;
 import mte.crasmonitoring.utils.PermissionsManager;
 import mte.crasmonitoring.utils.SharedPrefsUtils;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by eli on 21/11/2016.
@@ -52,7 +50,10 @@ public class ShowUserListsActivity extends AppCompatActivity  {
         setSupportActionBar(myToolbar);
         askForPermissions();
         setupViewPager();
+
         setupFab();
+        setupLogout();
+
     }
 
     private void askForPermissions()
@@ -109,6 +110,25 @@ public class ShowUserListsActivity extends AppCompatActivity  {
         });
     }
 
+    private void setupLogout()
+    {
+        (findViewById(R.id.logout_btn)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AuthUI.getInstance()
+                        .signOut(ShowUserListsActivity.this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // user is now signed out
+                                startActivity(new Intent(ShowUserListsActivity.this, LoginActivity.class));
+                                finish();
+                            }
+                        });
+            }
+
+        });
+    }
+
     private void checkInvitations()
     {
         try {
@@ -143,6 +163,7 @@ public class ShowUserListsActivity extends AppCompatActivity  {
                                             public void failedResponse(String errorMessage) {
 
                                             }
+
                                         });
                                     } else {
                                         Log.d("DeepLinkTest", "getInvitation: no deep link found.");

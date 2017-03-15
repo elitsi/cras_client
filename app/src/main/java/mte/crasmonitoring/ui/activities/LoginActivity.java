@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.facebook.appevents.AppEventsLogger;
 import com.firebase.ui.auth.AuthUI;
@@ -15,7 +16,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.Arrays;
 
-import mte.crasmonitoring.R;
 import mte.crasmonitoring.model.UserInfo;
 import mte.crasmonitoring.rest.APICallbacks;
 import mte.crasmonitoring.rest.APIManager;
@@ -28,14 +28,14 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        //FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(getApplication());
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             getUserDetailsAndContinue();
         }
+
         else {
             startActivityForResult(
                     AuthUI.getInstance()
@@ -79,8 +79,10 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void failedResponse(String errorMessage) {
-                    Log.v("error", errorMessage);
+                    Toast.makeText(LoginActivity.this, "Login user request failed.", Toast.LENGTH_LONG).show();
+
                 }
+
             });
         }
     }
