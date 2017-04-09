@@ -67,9 +67,11 @@ public class APIManager {
             }
             @Override
             public void onFailure(Call<List<RemoteUser>> call, Throwable t) {
-                // something went completely south (like no internet connection)
-                Log.d("Error", t.getMessage());
-                apiCallbacks.failedResponse(t.getMessage());
+                if(t != null && !TextUtils.isEmpty(t.getMessage()))
+                {
+                    Log.d("Error", t.getMessage());
+                    apiCallbacks.failedResponse(t.getMessage());
+                }
             }
         });
     }
@@ -295,6 +297,34 @@ public class APIManager {
     {
         CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
         Call<ResponseBody> call = accountService.sendAppViolationEvent(supervisorId);
+        call.enqueue(new Callback<ResponseBody >() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+
+                    try {
+                        apiCallbacks.successfulResponse(response.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+
+                    apiCallbacks.successfulResponse(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+                apiCallbacks.successfulResponse(t.getMessage());
+            }
+        });
+    }
+
+    public static void sendSpeedViolationEvent(Context context, final APICallbacks<String> apiCallbacks)
+    {
+        CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
+        Call<ResponseBody> call = accountService.sendSpeedViolationEvent(0);
         call.enqueue(new Callback<ResponseBody >() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {

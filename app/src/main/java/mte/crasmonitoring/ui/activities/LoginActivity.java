@@ -29,26 +29,37 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
         //FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(getApplication());
 
+        loginWithFirebase();
+    }
+
+    private void loginWithFirebase()
+    {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             getUserDetailsAndContinue();
         }
 
         else {
-            startActivityForResult(
-                    AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setLogo(R.drawable.eye_full)
-                            .setIsSmartLockEnabled(false)
-                            .setProviders(Arrays.asList(
-                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
-                                    new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()))
-                            .build(),
-                    RC_SIGN_IN);
+            showFirebaseActivity();
         }
+    }
+
+    private void showFirebaseActivity()
+    {
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setLogo(R.drawable.eye_full)
+                        .setIsSmartLockEnabled(false)
+                        .setProviders(Arrays.asList(
+                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
+                                new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()))
+                        .build(),
+                RC_SIGN_IN);
     }
 
     private void getUserDetailsAndContinue()
@@ -82,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void failedResponse(String errorMessage) {
                     Toast.makeText(LoginActivity.this, "Login user request failed.", Toast.LENGTH_LONG).show();
-
+                    showFirebaseActivity();
                 }
 
             });
@@ -94,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             // user is signed in!
             getUserDetailsAndContinue();
+            return;
         }
 
         // Sign in canceled
@@ -103,8 +115,11 @@ public class LoginActivity extends AppCompatActivity {
 
         // No network
         if (resultCode == ResultCodes.RESULT_NO_NETWORK) {
+            Toast.makeText(this, "No internet connection - please try again.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        Toast.makeText(this, "An error has occurred while trying to log in..", Toast.LENGTH_SHORT).show();
 
         // User is not signed in. Maybe just wait for the user to press
         // "sign in" again, or show a message.

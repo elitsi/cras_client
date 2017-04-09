@@ -40,6 +40,9 @@ public interface CrasAccountService {
     @GET("/application_anomaly")
     Call<ResponseBody> sendAppViolationEvent(@Header("sup_id") String supervisedId);
 
+    @GET("/speed_anomaly")
+    Call<ResponseBody> sendSpeedViolationEvent(@Header("speed") int speed);
+
     @GET("/stop_monitoring_by_supervise")
     Call<ResponseBody> stopMonitorBySupervise(@Header("sup_id") String supervisorId);
 
@@ -50,6 +53,6 @@ public interface CrasAccountService {
     Call<RemoteUser> getUser(@Header("user_to_get") String userToGet);
 
     @GET("/get_speed_limit")
-    Call<Double> getSpeedLimit(@Header("latitude") double latitude,@Header("latitude") double longitude);
+    Call<Double> getSpeedLimit(@Header("latitude") double latitude,@Header("longitude") double longitude);
 
 }

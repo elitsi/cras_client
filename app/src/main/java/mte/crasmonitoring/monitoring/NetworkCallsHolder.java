@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mte.crasmonitoring.model.SendViolationToApi;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -19,11 +20,11 @@ import rx.schedulers.Schedulers;
 
 public class NetworkCallsHolder {
     public static int VIOLATION_UNAPPROVED_APP = 1;
-    public static int VAIOLATION_DRIVING_LIMIT = 2;
+    public static int VIOLATION_DRIVING_LIMIT = 2;
     private SendViolationToApi sendViolationToApi;
     private List<Integer> pendingRequests;
     private Context context;
-
+    private Subscription networkConnectivitySubscription;
     public NetworkCallsHolder(Context context, SendViolationToApi sendViolationToApi) {
         this.context = context;
         this.sendViolationToApi = sendViolationToApi;
@@ -32,6 +33,7 @@ public class NetworkCallsHolder {
 
     public void startMonitoring()
     {
+        networkConnectivitySubscription =
         ReactiveNetwork.observeNetworkConnectivity(context)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -57,4 +59,12 @@ public class NetworkCallsHolder {
     {
         pendingRequests.add(requestType);
     }
+
+    public void stopMonitoring()
+    {
+        if (networkConnectivitySubscription != null && !networkConnectivitySubscription.isUnsubscribed()) {
+            networkConnectivitySubscription.unsubscribe();
+        }
+    }
+
 }

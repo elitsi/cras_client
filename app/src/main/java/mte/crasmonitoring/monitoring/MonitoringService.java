@@ -63,6 +63,7 @@ public class MonitoringService extends Service implements SendViolationToApi {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent != null)
             supervisorId = intent.getStringExtra(Constants.MONITOR_SUPERVISOR_ID_KEY);
+        createStickyNotification();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -74,7 +75,7 @@ public class MonitoringService extends Service implements SendViolationToApi {
         startMonitoringApps();
         startWatchingCalls();
         startTrackingDrivingSpeed();
-        createStickyNotification();
+
         monitorNetworkConnectivity();
     }
 
@@ -98,6 +99,7 @@ public class MonitoringService extends Service implements SendViolationToApi {
         removeNotification();
         unregisterReceivers();
         stopTrackingDrivingSpeed();
+        networkCallsHolder.stopMonitoring();
         mPhoneCallWatcher.stopMonitoring();
         stopSelf();
     }
@@ -137,7 +139,17 @@ public class MonitoringService extends Service implements SendViolationToApi {
 
     @Override
     public void sendDrivingViolationEvent() {
+        APIManager.sendSpeedViolationEvent(getBaseContext(), new APICallbacks<String>() {
+            @Override
+            public void successfulResponse(String s) {
 
+            }
+
+            @Override
+            public void failedResponse(String errorMessage) {
+                networkCallsHolder.addRequest(NetworkCallsHolder.VIOLATION_DRIVING_LIMIT);
+            }
+        });
     }
 
     private void stopMonitoringApps() {
@@ -164,7 +176,8 @@ public class MonitoringService extends Service implements SendViolationToApi {
 
         Intent intent = new Intent(this, MonitoringActivity.class);
         intent.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-
+        intent.putExtra(Constants.MONITOR_SUPERVISOR_ID_KEY,supervisorId);
+        intent.putExtra(Constants.MONITOR_OPEN_ACTIVITY_TYPE_KEY,Constants.MONITOR_OPEN_ACTIVITY_TYPE_ADDED_SUPERVISOR_VALUE);
         NotificationManager manager = ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
         Notification notification = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.eye_icon)
@@ -196,7 +209,7 @@ public class MonitoringService extends Service implements SendViolationToApi {
                 Toast.makeText(getBaseContext(),"You are over the speeding limit",Toast.LENGTH_LONG).show();
                 Log.v("MonitoringUpdates", "You are over the speeding limit");
                 int drivingSpeed = ( (SpeedLimitManager) speedLimitManager).getDrivingSpeed();
-                EventBus.getDefault().post(new Events.DrivingLimitViolationEvent(drivingSpeed));
+                sendDrivingViolationEvent();
             }
         });
         speedLimitManager.startMonitoring();

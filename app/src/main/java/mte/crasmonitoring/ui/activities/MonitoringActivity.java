@@ -119,15 +119,18 @@ public class MonitoringActivity extends AppCompatActivity {
             if(savedInstanceState == null && TextUtils.equals(intent.getStringExtra(Constants.MONITOR_OPEN_ACTIVITY_TYPE_KEY),Constants.MONITOR_OPEN_ACTIVITY_TYPE_ADDED_SUPERVISOR_VALUE))
             {
                 supervisorId = intent.getStringExtra(Constants.MONITOR_SUPERVISOR_ID_KEY);
-                APIManager.acceptMonitorRequest(getBaseContext(), supervisorId, new APICallbacks<String>() {
-                    @Override
-                    public void successfulResponse(String s)
-                    {
-                        MonitoringService.start(MonitoringActivity.this, supervisorId);
-                    }
-                    @Override
-                    public void failedResponse(String errorMessage) {}
-                });
+                if(!isMonitoringServiceRunning())
+                {
+                    APIManager.acceptMonitorRequest(getBaseContext(), supervisorId, new APICallbacks<String>() {
+                        @Override
+                        public void successfulResponse(String s)
+                        {
+                            MonitoringService.start(MonitoringActivity.this, supervisorId);
+                        }
+                        @Override
+                        public void failedResponse(String errorMessage) {}
+                    });
+                }
             }
         }
     }
