@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import it.gmariotti.recyclerview.adapter.AlphaAnimatorAdapter;
 import mte.crasmonitoring.model.RemoteUser;
@@ -102,11 +103,14 @@ public class ShowSupervisesFragment extends RemoteUsersListFragmentBase {
                     public void successfulResponse(String s) {
 
                         try {
+
                             int counter = 1;    // holds the sessions number
                             JSONArray jsonArray = new JSONArray(s); // will hold the whole json object from server
                             JSONObject session ;                    // will hold each session in the array
                             int sessionEventsLength;
                             ArrayList<ExpandableListAdapter.Item> data = new ArrayList<>();         // this is the final list which will be sent to session dialogFragment
+                            String fullDate,startDateStr_first, startDateStr_sec,startDateStr,endDateStr_first,endDateStr_sec,endDateStr;
+                            StringTokenizer tokens;
 
                             for (int i = 0; i < jsonArray.length(); i++) {
 
@@ -116,14 +120,26 @@ public class ShowSupervisesFragment extends RemoteUsersListFragmentBase {
                                     sessionEventsLength = session.getJSONArray("events").length();
 
                                     if(sessionEventsLength > 0 ){
-                                        data.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Session " + counter));
+
+                                        // getting dates for session
+
+                                        tokens = new StringTokenizer(session.getString("start_time"), " ");
+                                        startDateStr_first = tokens.nextToken();
+                                        startDateStr_sec = tokens.nextToken();
+                                        tokens = new StringTokenizer(session.getString("end_time"), " ");
+                                        endDateStr_first = tokens.nextToken();
+                                        endDateStr_sec = tokens.nextToken();
+                                        String[] separated_start = startDateStr_sec.split(":");
+                                        String[] separated_end = endDateStr_sec.split(":");
+
+                                        fullDate = startDateStr_first + " " + separated_start[0]+ ":" +separated_start[1] + "  to:  " + endDateStr_first + " " + separated_end[0]+ ":" +separated_end[1];
+                                        data.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, fullDate));
                                         counter++;
                                     }
                                     for(int j = 0 ; j < sessionEventsLength ; j++){
                                         data.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD, session.getJSONArray("events").getString(j)));
                                     }
                                 }
-
                             }
 
                             createDialog(data);
@@ -132,8 +148,6 @@ public class ShowSupervisesFragment extends RemoteUsersListFragmentBase {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-
                     }
 
                     @Override
