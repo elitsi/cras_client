@@ -349,4 +349,33 @@ public class APIManager {
         });
     }
 
+    public static void getUserLogSessions(Context context, String supervisedId , final APICallbacks<String> apiCallbacks)
+    {
+        CrasAccountService accountService = ServiceGenerator.createService(CrasAccountService.class, context);
+        Call<ResponseBody> call = accountService.getUserSessions(supervisedId);
+        call.enqueue(new Callback<ResponseBody >() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+
+                    try {
+                        apiCallbacks.successfulResponse(response.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+
+                    apiCallbacks.successfulResponse(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+                apiCallbacks.successfulResponse(t.getMessage());
+            }
+        });
+    }
+
 }
+

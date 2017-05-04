@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -85,6 +86,7 @@ public class RemoteUsersAdapter extends RecyclerView.Adapter<RemoteUsersAdapter.
 
     private void setupSuperviser(RemoteUsersAdapter.RemoteUserHolder remoteUserHolder, final RemoteUser supervised)
     {
+        remoteUserHolder.btnLog.setVisibility(View.VISIBLE);
         remoteUserHolder.btnMonitor.setVisibility(View.VISIBLE);
         remoteUserHolder.btnMonitor.setText(supervised.getStatus() ? "Stop monitoring" : "Monitor");
         if(supervisorsFragmentListener != null)
@@ -93,6 +95,14 @@ public class RemoteUsersAdapter extends RecyclerView.Adapter<RemoteUsersAdapter.
                 @Override
                 public void onClick(View view) {
                     supervisorsFragmentListener.onSupervisedClick(supervised);
+                }
+            });
+
+            remoteUserHolder.btnLog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Getting log session from server.
+                    supervisorsFragmentListener.onSupervisedLogClick(supervised);
                 }
             });
         }
@@ -111,6 +121,8 @@ public class RemoteUsersAdapter extends RecyclerView.Adapter<RemoteUsersAdapter.
         protected TextView tvName;
         protected ImageView civPicture;
         protected Button btnMonitor;
+        protected ImageButton btnLog;
+
 
 
         public RemoteUserHolder(View v ) {
@@ -118,6 +130,7 @@ public class RemoteUsersAdapter extends RecyclerView.Adapter<RemoteUsersAdapter.
             tvName = (TextView) v.findViewById(R.id.tvName);
             civPicture = (ImageView) v.findViewById(R.id.civ_picture);
             btnMonitor = (Button) v.findViewById(R.id.btn_start_monitor);
+            btnLog = (ImageButton) v.findViewById(R.id.btn_show_log);
         }
 
     }

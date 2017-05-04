@@ -54,6 +54,19 @@
             android:padding="7dp"
             android:layout_marginTop="7dp" />
 
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_show_log"
+            android:elevation="5dp"
+            android:textSize="14sp"
+            android:background="@drawable/ic_eye"
+            android:minHeight="30dp"
+            android:layout_toRightOf="@+id/btn_start_monitor"
+            android:layout_below="@id/tvName"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="7dp" />
+
     </RelativeLayout>
 
 

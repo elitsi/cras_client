@@ -55,4 +55,7 @@ public interface CrasAccountService {
     @GET("/get_speed_limit")
     Call<Double> getSpeedLimit(@Header("latitude") double latitude,@Header("longitude") double longitude);
 
+    @GET("/get_log_session")
+    Call<ResponseBody> getUserSessions(@Header("sup_id") String sup_id);
+
 }
