@@ -52,7 +52,9 @@ public class SessionsDialogFragment extends DialogFragment {
         recyclerview.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         adapter = new ExpandableListAdapter(sessions);
         recyclerview.setAdapter(adapter);
-
+        //v.setBackgroundResource(android.R.drawable.roun);
+        v.setBackgroundResource(R.drawable.layout_bg);
+        //getDialog().getWindow().setBackgroundDrawableResource(R.drawable.layout_bg);
         return v;
     }
 

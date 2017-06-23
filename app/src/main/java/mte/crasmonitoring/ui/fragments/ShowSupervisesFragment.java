@@ -127,12 +127,22 @@ public class ShowSupervisesFragment extends RemoteUsersListFragmentBase {
                                         startDateStr_first = tokens.nextToken();
                                         startDateStr_sec = tokens.nextToken();
                                         tokens = new StringTokenizer(session.getString("end_time"), " ");
-                                        endDateStr_first = tokens.nextToken();
-                                        endDateStr_sec = tokens.nextToken();
-                                        String[] separated_start = startDateStr_sec.split(":");
-                                        String[] separated_end = endDateStr_sec.split(":");
+                                        String[] separated_start;
+                                        String[] separated_end;
+                                        if(tokens.hasMoreTokens()){
+                                            endDateStr_first = tokens.nextToken();
+                                            endDateStr_sec = tokens.nextToken();
+                                            separated_start = startDateStr_sec.split(":");
+                                            separated_end = endDateStr_sec.split(":");
 
-                                        fullDate = startDateStr_first + " " + separated_start[0]+ ":" +separated_start[1] + "  to:  " + endDateStr_first + " " + separated_end[0]+ ":" +separated_end[1];
+                                            fullDate = startDateStr_first + " " + separated_start[0]+ ":" +separated_start[1] + "  to:  " + endDateStr_first + " " + separated_end[0]+ ":" +separated_end[1];
+                                        }
+                                        else{
+
+                                            separated_start = startDateStr_sec.split(":");
+                                            fullDate = startDateStr_first + " " + separated_start[0]+ ":" +separated_start[1] ;
+                                        }
+
                                         data.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, fullDate));
                                         counter++;
                                     }
