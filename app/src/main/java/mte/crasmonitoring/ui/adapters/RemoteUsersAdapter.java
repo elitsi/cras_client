@@ -79,6 +79,7 @@ public class RemoteUsersAdapter extends RecyclerView.Adapter<RemoteUsersAdapter.
     private void setupSupervisor(RemoteUsersAdapter.RemoteUserHolder remoteUserHolder, final RemoteUser supervisor)
     {
         remoteUserHolder.btnMonitor.setVisibility(View.GONE);
+        remoteUserHolder.btnLog.setVisibility(View.GONE);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) remoteUserHolder.tvName.getLayoutParams();
         params.addRule(RelativeLayout.CENTER_VERTICAL);
         remoteUserHolder.tvName.setLayoutParams(params);
@@ -106,6 +107,7 @@ public class RemoteUsersAdapter extends RecyclerView.Adapter<RemoteUsersAdapter.
                 }
             });
         }
+
     }
 
     @Override

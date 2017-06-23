@@ -208,7 +208,6 @@ public class MonitoringService extends Service implements SendViolationToApi {
             public void didBad() {
                 Toast.makeText(getBaseContext(),"You are over the speeding limit",Toast.LENGTH_LONG).show();
                 Log.v("MonitoringUpdates", "You are over the speeding limit");
-                int drivingSpeed = ( (SpeedLimitManager) speedLimitManager).getDrivingSpeed();
                 sendDrivingViolationEvent();
             }
         });

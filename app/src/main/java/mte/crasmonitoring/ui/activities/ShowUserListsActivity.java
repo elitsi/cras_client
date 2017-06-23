@@ -13,9 +13,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
-import com.github.jksiezni.permissive.PermissionsGrantedListener;
-import com.github.jksiezni.permissive.PermissionsRefusedListener;
-import com.github.jksiezni.permissive.Permissive;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
@@ -24,8 +21,15 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.List;
 
 import mte.crasmonitoring.R;
 import mte.crasmonitoring.eventbus.Events;
@@ -58,30 +62,46 @@ public class ShowUserListsActivity extends AppCompatActivity  {
 
     private void askForPermissions()
     {
-        new Permissive.Request(Manifest.permission.BLUETOOTH, Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE, Manifest.permission.MODIFY_AUDIO_SETTINGS, Manifest.permission.PROCESS_OUTGOING_CALLS)
-                .whenPermissionsGranted(new PermissionsGrantedListener() {
-                    @Override
-                    public void onPermissionsGranted(String[] permissions) throws SecurityException {
-                        PermissionsManager.requestUsageStatsPermission(ShowUserListsActivity.this, new PermissionsManager.PermissionsListener() {
-                            @Override
-                            public void onPermissionsGranted() {
-                                PermissionsManager.requestOverlayPermission(ShowUserListsActivity.this, new PermissionsManager.PermissionsListener() {
-                                    @Override
-                                    public void onPermissionsGranted() {
 
-                                    }
-                                });
-                            }
-                        });
-                    }
-                })
-                .whenPermissionsRefused(new PermissionsRefusedListener() {
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.BLUETOOTH,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                        Manifest.permission.PROCESS_OUTGOING_CALLS
+
+                ).withListener(new MultiplePermissionsListener()
+        {
+            @Override public void onPermissionsChecked(MultiplePermissionsReport report)
+            {
+                askForComplexPermissions();
+            }
+            @Override public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token)
+            {
+                token.continuePermissionRequest();
+            }
+
+        }).check();
+    }
+
+    private void askForComplexPermissions()
+    {
+        PermissionsManager.requestUsageStatsPermission(ShowUserListsActivity.this, new PermissionsManager.PermissionsListener() {
+
+
+            @Override
+            public void onPermissionsGranted() {
+
+                PermissionsManager.requestOverlayPermission(ShowUserListsActivity.this, new PermissionsManager.PermissionsListener() {
                     @Override
-                    public void onPermissionsRefused(String[] permissions) {
-                        // given permissions are refused
-                        Toast.makeText(ShowUserListsActivity.this,"Please enable permission", Toast.LENGTH_LONG).show();                            }
-                })
-                .execute(ShowUserListsActivity.this);
+                    public void onPermissionsGranted() {
+
+                    }
+                });
+            }
+        });
     }
 
     @Override

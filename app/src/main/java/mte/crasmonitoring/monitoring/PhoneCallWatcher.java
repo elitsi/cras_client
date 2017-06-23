@@ -127,44 +127,57 @@ public class PhoneCallWatcher implements MonitoringAbilityService {
         }
     }
 
+    public static boolean isBluetoothHeadsetConnected() {
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        return mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()
+                && mBluetoothAdapter.getProfileConnectionState(BluetoothHeadset.HEADSET) == BluetoothHeadset.STATE_CONNECTED;
+    }
+
     private void checkBluetoothConnection(final BluetoothConnectionListener bluetoothConnectionListener)
     {
-        // Get the default adapter
-        final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        // Define Service Listener of BluetoothProfile
-        BluetoothProfile.ServiceListener mProfileListener = new BluetoothProfile.ServiceListener() {
-            public void onServiceConnected(int profile, BluetoothProfile proxy) {
-                if (profile == BluetoothProfile.HEADSET) {
-                    mBluetoothHeadset = (BluetoothHeadset) proxy;
+        if(isBluetoothHeadsetConnected())
+            bluetoothConnectionListener.onDeviceConnected();
+        else
+            bluetoothConnectionListener.onDeviceNotConnected();
 
-                    //call functions on mBluetoothHeadset to check if Bluetooth SCO audio is connected.
-                    List<BluetoothDevice> devices = mBluetoothHeadset.getConnectedDevices();
-                    for ( final BluetoothDevice dev : devices ) {
-                        if(mBluetoothHeadset.isAudioConnected(dev) || mBluetoothHeadset.startVoiceRecognition(dev))
-                        {
-                            bluetoothConnectionListener.onDeviceConnected();
-                            return;
-                            //Log.v("TestBluetooth", "Connected device - " + dev.getName());
-                           // Toast.makeText(mContext,"Connected device - " + dev.getName(), Toast.LENGTH_LONG).show();
-                        }
-
-                    }
-                    bluetoothConnectionListener.onDeviceNotConnected();
-                    // finally Close proxy connection after use.
-                    mBluetoothAdapter.closeProfileProxy(BluetoothProfile.HEADSET, mBluetoothHeadset);
-
-                }
-            }
-            public void onServiceDisconnected(int profile) {
-                if (profile == BluetoothProfile.HEADSET) {
-                    mBluetoothHeadset = null;
-                }
-            }
-        };
-
-        // Establish connection to the proxy.
-        mBluetoothAdapter.getProfileProxy(mContext, mProfileListener, BluetoothProfile.HEADSET);
+//        // Get the default adapter
+//        final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//
+//        // Define Service Listener of BluetoothProfile
+//        BluetoothProfile.ServiceListener mProfileListener = new BluetoothProfile.ServiceListener()
+//        {
+//            public void onServiceConnected(int profile, BluetoothProfile proxy) {
+//                if (profile == BluetoothProfile.HEADSET) {
+//                    mBluetoothHeadset = (BluetoothHeadset) proxy;
+//
+//                    //call functions on mBluetoothHeadset to check if Bluetooth SCO audio is connected.
+//                    List<BluetoothDevice> devices = mBluetoothHeadset.getConnectedDevices();
+//                    for ( final BluetoothDevice dev : devices ) {
+//                        if(mBluetoothHeadset.isAudioConnected(dev) || mBluetoothHeadset.startVoiceRecognition(dev))
+//                        {
+//                            bluetoothConnectionListener.onDeviceConnected();
+//                            return;
+//                            //Log.v("TestBluetooth", "Connected device - " + dev.getName());
+//                           // Toast.makeText(mContext,"Connected device - " + dev.getName(), Toast.LENGTH_LONG).show();
+//                        }
+//
+//                    }
+//                    bluetoothConnectionListener.onDeviceNotConnected();
+//                    // finally Close proxy connection after use.
+//                    mBluetoothAdapter.closeProfileProxy(BluetoothProfile.HEADSET, mBluetoothHeadset);
+//
+//                }
+//            }
+//            public void onServiceDisconnected(int profile) {
+//                if (profile == BluetoothProfile.HEADSET) {
+//                    mBluetoothHeadset = null;
+//                }
+//            }
+//        };
+//
+//        // Establish connection to the proxy.
+//        mBluetoothAdapter.getProfileProxy(mContext, mProfileListener, BluetoothProfile.HEADSET);
     }
 
 }

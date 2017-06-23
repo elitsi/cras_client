@@ -91,6 +91,7 @@ public class AppsCheckerManager extends MonitoringBase {
         acceptedPackagesList.add(context.getPackageName());
         acceptedPackagesList.add(context.getString(R.string.google_maps_package_name));
         acceptedPackagesList.add(context.getString(R.string.waze_package_name));
+        acceptedPackagesList.add(context.getString(R.string.one_plus_2_dialer_package_name));
 
         //Get dialer's package name
         Intent i = new Intent();

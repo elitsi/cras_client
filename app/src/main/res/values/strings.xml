@@ -3,6 +3,7 @@
     <string name="monitor_notification_title">You are being monitored</string>
     <string name="monitor_notification_context">You are being monitored by x</string>
     <string name="waze_package_name">com.waze</string>
+    <string name="one_plus_2_dialer_package_name">com.android.incallui</string>
     <string name="google_maps_package_name">com.google.android.apps.maps</string>
     <string name="invite_url_host">"f3a8n.app.goo.gl"</string>
     <string name="invite_url_deep_link">"http://www.cras.com?id="</string>
